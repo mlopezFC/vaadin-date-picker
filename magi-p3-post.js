@@ -1,7 +1,7 @@
 module.exports = {
   files: [
-    'vaadin-date-picker.js',
-    'vaadin-date-picker-light.js'
+    'vaadin-date-range-picker.js',
+    'vaadin-date-range-picker-light.js'
   ],
   from: [
     /import '\.\/theme\/lumo\/vaadin-(.+)\.js';/

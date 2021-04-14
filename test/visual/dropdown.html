@@ -17,7 +17,7 @@
     </template>
   </dom-module>
 
-  <dom-module id="month-calendar-test-styles" theme-for="vaadin-month-calendar">
+  <dom-module id="month-calendar-test-styles" theme-for="vaadin-date-range-month-calendar">
     <template>
       <style>
         :host(:not([focused])) [part="date"][focused]::before {
@@ -29,7 +29,7 @@
 
   <script>
     const theme = window.location.search.replace(/.*theme=(\w+).*/, '$1') || 'lumo';
-    document.write(`<link rel="import" href="../../theme/${theme}/vaadin-date-picker.html">`);
+    document.write(`<link rel="import" href="../../theme/${theme}/vaadin-date-range-picker.html">`);
   </script>
 </head>
 
@@ -37,24 +37,24 @@
 
   <div id="dropdown-tests" style="padding: 10px;">
     Plain
-    <vaadin-date-picker id="plain" initial-position="2013-04-27"></vaadin-date-picker>
+    <vaadin-date-range-picker id="plain" initial-position="2013-04-27"></vaadin-date-range-picker>
 
     <br>Pre-selected value
-    <vaadin-date-picker value="1991-12-20" id="selected-value"></vaadin-date-picker>
+    <vaadin-date-range-picker value="1991-12-20" id="selected-value"></vaadin-date-range-picker>
 
     <br>Date limit
-    <vaadin-date-picker min="2017-06-10" max="2017-06-29" initial-position="2017-06-15" id="date-limit"></vaadin-date-picker>
+    <vaadin-date-range-picker min="2017-06-10" max="2017-06-29" initial-position="2017-06-15" id="date-limit"></vaadin-date-range-picker>
 
     <br>Week numbers
-    <vaadin-date-picker show-week-numbers id="weeks" initial-position="2018-04-28"></vaadin-date-picker>    
+    <vaadin-date-range-picker show-week-numbers id="weeks" initial-position="2018-04-28"></vaadin-date-range-picker>    
   </div>
 
   <script>
     window.addEventListener('WebComponentsReady', function() {
-      var datepicker = document.querySelector('vaadin-date-picker#weeks');
+      var datepicker = document.querySelector('vaadin-date-range-picker#weeks');
       datepicker.set('i18n.firstDayOfWeek', 1);
 
-      [].forEach.call(document.querySelectorAll('vaadin-date-picker'), function(d) {
+      [].forEach.call(document.querySelectorAll('vaadin-date-range-picker'), function(d) {
         d.$.input.addEventListener('focus', function(e) {
           // Make sure the input doesn't have a blinking caret that might fail the test
           e.target.blur();
@@ -68,7 +68,7 @@
     });
 
     function closeDatePickers() {
-      var datePickers = document.querySelectorAll('vaadin-date-picker');
+      var datePickers = document.querySelectorAll('vaadin-date-range-picker');
 
       [].forEach.call(datePickers, function(datePicker) {
         datePicker.close();

@@ -7,11 +7,11 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../polymer/polymer-element.html">
 <link rel="import" href="../../iron-media-query/iron-media-query.html">
 <link rel="import" href="../../vaadin-themable-mixin/vaadin-themable-mixin.html">
-<link rel="import" href="vaadin-date-picker-overlay.html">
-<link rel="import" href="vaadin-date-picker-overlay-content.html">
-<link rel="import" href="vaadin-date-picker-mixin.html">
+<link rel="import" href="vaadin-date-range-picker-overlay.html">
+<link rel="import" href="vaadin-date-range-picker-overlay-content.html">
+<link rel="import" href="vaadin-date-range-picker-mixin.html">
 
-<dom-module id="vaadin-date-picker-light">
+<dom-module id="vaadin-date-range-picker-light">
   <template>
     <style>
       :host {
@@ -24,7 +24,7 @@ This program is available under Apache License Version 2.0, available at https:/
     </style>
     <slot></slot>
 
-    <vaadin-date-picker-overlay
+    <vaadin-date-range-picker-overlay
         id="overlay"
         fullscreen$=[[_fullscreen]]
         opened="{{opened}}"
@@ -33,7 +33,7 @@ This program is available under Apache License Version 2.0, available at https:/
         on-vaadin-overlay-close="_onOverlayClosed"
         theme$="[[__getOverlayTheme(theme, _overlayInitialized)]]">
       <template>
-        <vaadin-date-picker-overlay-content
+        <vaadin-date-range-picker-overlay-content
           id="overlay-content" i18n="[[i18n]]"
           fullscreen$=[[_fullscreen]]
           label=[[label]]
@@ -47,9 +47,9 @@ This program is available under Apache License Version 2.0, available at https:/
           role="dialog"
           part="overlay-content"
           theme$="[[__getOverlayTheme(theme, _overlayInitialized)]]">
-        </vaadin-date-picker-overlay-content>
+        </vaadin-date-range-picker-overlay-content>
       </template>
-    </vaadin-date-picker-overlay>
+    </vaadin-date-range-picker-overlay>
 
     <iron-media-query
         query="[[_fullscreenMediaQuery]]"
@@ -60,7 +60,7 @@ This program is available under Apache License Version 2.0, available at https:/
     (function() {
       /**
        *
-       * `<vaadin-date-picker-light>` is a customizable version of the `<vaadin-date-picker>` providing
+       * `<vaadin-date-range-picker-light>` is a customizable version of the `<vaadin-date-range-picker>` providing
        * only the scrollable month calendar view and leaving the input field definition to the user.
        *
        * To create a custom input field, you need to add a child element which has a two-way
@@ -69,21 +69,21 @@ This program is available under Apache License Version 2.0, available at https:/
        * using an `<input>` element extended with `iron-input`.
        *
        * ```html
-       * <vaadin-date-picker-light>
+       * <vaadin-date-range-picker-light>
        *   <iron-input>
        *     <input/>
        *   </iron-input>
-       * </vaadin-date-picker-light>
+       * </vaadin-date-range-picker-light>
        * ```
        *
        * If you are using other custom input fields like `<paper-input>`, you
        * need to define the name of value property using the `attrForValue` property.
        *
        * ```html
-       * <vaadin-date-picker-light attr-for-value="value">
+       * <vaadin-date-range-picker-light attr-for-value="value">
        *   <paper-input label="Birthday">
        *   </paper-input>
-       * </vaadin-date-picker-light>
+       * </vaadin-date-range-picker-light>
        * ```
        *
        * ### Styling
@@ -92,29 +92,29 @@ This program is available under Apache License Version 2.0, available at https:/
        *
        * Part name | Description | Theme for Element
        * ----------------|----------------|----------------
-       * `overlay-content` | The overlay element | vaadin-date-picker-light
+       * `overlay-content` | The overlay element | vaadin-date-range-picker-light
        *
        * See [ThemableMixin – how to apply styles for shadow parts](https://github.com/vaadin/vaadin-themable-mixin/wiki)
        *
-       * In addition to `<vaadin-date-picker-light>` itself, the following
+       * In addition to `<vaadin-date-range-picker-light>` itself, the following
        * internal components are themable:
        *
-       * - `<vaadin-date-picker-overlay>`
-       * - `<vaadin-date-picker-overlay-content>`
-       * - `<vaadin-month-calendar>`
+       * - `<vaadin-date-range-picker-overlay>`
+       * - `<vaadin-date-range-picker-overlay-content>`
+       * - `<vaadin-date-range-month-calendar>`
        *
-       * Note: the `theme` attribute value set on `<vaadin-date-picker-light>`
+       * Note: the `theme` attribute value set on `<vaadin-date-range-picker-light>`
        * is propagated to the internal themable components listed above.
        *
        * @memberof Vaadin
        * @mixes Vaadin.ThemableMixin
-       * @mixes Vaadin.DatePickerMixin
+       * @mixes Vaadin.DateRangePickerMixin
        */
-      class DatePickerLightElement extends
+      class DateRangePickerLightElement extends
         Vaadin.ThemableMixin(
-          Vaadin.DatePickerMixin(Polymer.Element)) {
+          Vaadin.DateRangePickerMixin(Polymer.Element)) {
         static get is() {
-          return 'vaadin-date-picker-light';
+          return 'vaadin-date-range-picker-light';
         }
 
         static get properties() {
@@ -163,13 +163,13 @@ This program is available under Apache License Version 2.0, available at https:/
         }
       }
 
-      customElements.define(DatePickerLightElement.is, DatePickerLightElement);
+      customElements.define(DateRangePickerLightElement.is, DateRangePickerLightElement);
 
       /**
        * @namespace Vaadin
        */
       window.Vaadin = window.Vaadin || {};
-      Vaadin.DatePickerLightElement = DatePickerLightElement;
+      Vaadin.DateRangePickerLightElement = DateRangePickerLightElement;
     })();
   </script>
 </dom-module>

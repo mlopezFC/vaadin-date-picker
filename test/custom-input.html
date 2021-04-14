@@ -10,27 +10,27 @@
   <script src="common.js"></script>
 
   <link rel="import" href="../../iron-input/iron-input.html">
-  <link rel="import" href="../vaadin-date-picker-light.html">
+  <link rel="import" href="../vaadin-date-range-picker-light.html">
 </head>
 
 <body>
   <test-fixture id="custom-input-datepicker">
     <template>
-      <vaadin-date-picker-light>
+      <vaadin-date-range-picker-light>
         <iron-input>
           <input>
         </iron-input>
-      </vaadin-date-picker-light>
+      </vaadin-date-range-picker-light>
     </template>
   </test-fixture>
 
   <test-fixture id="custom-input-datepicker-theme">
     <template>
-      <vaadin-date-picker-light theme="foo">
+      <vaadin-date-range-picker-light theme="foo">
         <iron-input>
           <input>
         </iron-input>
-      </vaadin-date-picker-light>
+      </vaadin-date-range-picker-light>
     </template>
   </test-fixture>
 
@@ -111,7 +111,7 @@
 
         it('should propagate theme attribute to month calendar', () => {
           const monthCalendar = overlayContent.$.monthScroller
-            .querySelector('vaadin-month-calendar');
+            .querySelector('vaadin-date-range-month-calendar');
           expect(monthCalendar.getAttribute('theme')).to.equal('foo');
         });
       });

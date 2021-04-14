@@ -6,7 +6,7 @@
       "url": "date-picker-basic-demos",
       "src": "date-picker-basic-demos.html",
       "meta": {
-        "title": "vaadin-date-picker Basic Examples",
+        "title": "vaadin-date-range-picker Basic Examples",
         "description": "",
         "image": ""
       }
@@ -17,7 +17,7 @@
       "url": "date-picker-validation-demos",
       "src": "date-picker-validation-demos.html",
       "meta": {
-        "title": "vaadin-date-picker Validation Examples",
+        "title": "vaadin-date-range-picker Validation Examples",
         "description": "",
         "image": ""
       }
@@ -28,7 +28,7 @@
       "url": "date-picker-presentation-demos",
       "src": "date-picker-presentation-demos.html",
       "meta": {
-        "title": "vaadin-date-picker Presentation Examples",
+        "title": "vaadin-date-range-picker Presentation Examples",
         "description": "",
         "image": ""
       }
@@ -39,7 +39,7 @@
       "url": "date-picker-localization-demos",
       "src": "date-picker-localization-demos.html",
       "meta": {
-        "title": "vaadin-date-picker Localization Examples",
+        "title": "vaadin-date-range-picker Localization Examples",
         "description": "",
         "image": ""
       }
@@ -50,7 +50,7 @@
       "url": "date-picker-theme-variants-demos",
       "src": "date-picker-theme-variants-demos.html",
       "meta": {
-        "title": "vaadin-date-picker Theme Variants Examples",
+        "title": "vaadin-date-range-picker Theme Variants Examples",
         "description": "",
         "image": ""
       }
@@ -61,7 +61,7 @@
       "url": "date-picker-styling-demos",
       "src": "date-picker-styling-demos.html",
       "meta": {
-        "title": "vaadin-date-picker Styling Usage",
+        "title": "vaadin-date-range-picker Styling Usage",
         "description": "",
         "image": ""
       }

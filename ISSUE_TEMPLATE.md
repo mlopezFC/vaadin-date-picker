@@ -1,5 +1,5 @@
 ### Description
-<!-- Example: The `vaadin-date-picker` element does not open when the input is clicked. -->
+<!-- Example: The `vaadin-date-range-picker` element does not open when the input is clicked. -->
 
 ### Expected outcome
 <!-- Example: Overlay should appear when input is clicked. -->
@@ -12,9 +12,9 @@
 
 ### Steps to reproduce
 <!-- Example
-1. Put a `vaadin-date-picker` element in the page.
+1. Put a `vaadin-date-range-picker` element in the page.
 2. Open the page in a web browser.
-3. Click the input of `vaadin-date-picker` element.
+3. Click the input of `vaadin-date-range-picker` element.
 -->
 
 ### Browsers Affected

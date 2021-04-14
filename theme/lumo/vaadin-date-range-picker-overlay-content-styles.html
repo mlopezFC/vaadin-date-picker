@@ -6,7 +6,7 @@
 
 <link rel="import" href="../../../vaadin-button/theme/lumo/vaadin-button.html">
 
-<dom-module id="lumo-date-picker-overlay-content" theme-for="vaadin-date-picker-overlay-content">
+<dom-module id="lumo-date-picker-overlay-content" theme-for="vaadin-date-range-picker-overlay-content">
   <template>
     <style>
       :host {
@@ -75,7 +75,7 @@
         display: block;
       }
 
-      /* TODO unsupported selector, should fix this in vaadin-date-picker that it adapts to the
+      /* TODO unsupported selector, should fix this in vaadin-date-range-picker that it adapts to the
        * width of the year scroller */
       #scrollers[desktop] [part="months"] {
         right: auto;
@@ -182,7 +182,7 @@
         content: none;
       }
 
-      /* TODO magic number (same as used for iron-media-query in vaadin-date-picker-overlay-content) */
+      /* TODO magic number (same as used for iron-media-query in vaadin-date-range-picker-overlay-content) */
       @media screen and (max-width: 374px) {
         :host {
           background-image: none;

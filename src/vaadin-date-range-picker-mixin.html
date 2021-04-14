@@ -6,7 +6,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
 <link rel="import" href="../../iron-a11y-keys-behavior/iron-a11y-keys-behavior.html">
 <link rel="import" href="../../iron-resizable-behavior/iron-resizable-behavior.html">
-<link rel="import" href="vaadin-date-picker-helper.html">
+<link rel="import" href="vaadin-date-range-picker-helper.html">
 
 <script>
   window.Vaadin = window.Vaadin || {};
@@ -14,7 +14,7 @@ This program is available under Apache License Version 2.0, available at https:/
   /**
    * @polymerMixin
    */
-  Vaadin.DatePickerMixin = subclass => class VaadinDatePickerMixin extends Polymer.mixinBehaviors(
+  Vaadin.DateRangePickerMixin = subclass => class VaadinDateRangePickerMixin extends Polymer.mixinBehaviors(
     [Polymer.IronResizableBehavior], subclass
   ) {
 
@@ -604,7 +604,7 @@ This program is available under Apache License Version 2.0, available at https:/
         this.value = oldValue;
         return;
       }
-      if (!Vaadin.DatePickerHelper._dateEquals(this[property], date)) {
+      if (!Vaadin.DateRangePickerHelper._dateEquals(this[property], date)) {
         this[property] = date;
         this.value && this.validate();
       }
@@ -685,11 +685,11 @@ This program is available under Apache License Version 2.0, available at https:/
         parsedInitialPosition || new Date();
 
       if (parsedInitialPosition ||
-        Vaadin.DatePickerHelper._dateAllowed(initialPosition, this._minDate, this._maxDate)) {
+        Vaadin.DateRangePickerHelper._dateAllowed(initialPosition, this._minDate, this._maxDate)) {
         this._overlayContent.initialPosition = initialPosition;
       } else {
         this._overlayContent.initialPosition =
-          Vaadin.DatePickerHelper._getClosestDate(initialPosition, [this._minDate, this._maxDate]);
+          Vaadin.DateRangePickerHelper._getClosestDate(initialPosition, [this._minDate, this._maxDate]);
       }
 
       this._overlayContent.scrollToDate(this._overlayContent.focusedDate || this._overlayContent.initialPosition);
@@ -813,7 +813,7 @@ This program is available under Apache License Version 2.0, available at https:/
       const inputValid = !this._inputValue ||
         (this._selectedDate && this._inputValue === this._getFormattedDate(this.i18n.formatDate, this._selectedDate));
       const minMaxValid = !this._selectedDate ||
-        Vaadin.DatePickerHelper._dateAllowed(this._selectedDate, this._minDate, this._maxDate);
+        Vaadin.DateRangePickerHelper._dateAllowed(this._selectedDate, this._minDate, this._maxDate);
 
       let inputValidity = true;
       if (this._inputElement) {
@@ -860,7 +860,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
     /** @private */
     _getFormattedDate(formatDate, date) {
-      return formatDate(Vaadin.DatePickerHelper._extractDateParts(date));
+      return formatDate(Vaadin.DateRangePickerHelper._extractDateParts(date));
     }
 
     /** @private */
@@ -1002,7 +1002,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
         if (this._isValidDate(parsedDate)) {
           this._ignoreFocusedDateChange = true;
-          if (!Vaadin.DatePickerHelper._dateEquals(parsedDate, this._focusedDate)) {
+          if (!Vaadin.DateRangePickerHelper._dateEquals(parsedDate, this._focusedDate)) {
             this._focusedDate = parsedDate;
           }
           this._ignoreFocusedDateChange = false;

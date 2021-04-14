@@ -7,14 +7,14 @@
     </style>
 
     <h3>Localizing</h3>
-    <vaadin-demo-snippet id="date-picker-localizing" when-defined="vaadin-date-picker">
+    <vaadin-demo-snippet id="date-picker-localizing" when-defined="vaadin-date-range-picker">
       <template preserve-content>
-        <vaadin-date-picker label="Syntymäpäivä"></vaadin-date-picker>
+        <vaadin-date-range-picker label="Syntymäpäivä"></vaadin-date-range-picker>
         <div>Day of week: <span id="output"></span></div>
         <script>
           window.addDemoReadyListener('#date-picker-localizing', function(document) {
             // Set up the parser library for Finnish locale
-            var datepicker = document.querySelector('vaadin-date-picker');
+            var datepicker = document.querySelector('vaadin-date-range-picker');
             const output = document.querySelector('#output');
             datepicker.addEventListener('change', function(event) {
               const date = Sugar.Date.create(event.target.value, 'fi');
@@ -58,7 +58,7 @@
 
     <h3>Custom date parser</h3>
     <p>You can use a 3rd party library to parse dates from the input text.</p>
-    <vaadin-demo-snippet id="date-picker-custom-key-input" when-defined="vaadin-date-picker">
+    <vaadin-demo-snippet id="date-picker-custom-key-input" when-defined="vaadin-date-range-picker">
       <template preserve-content>
         <!--
           Try typing the following examples:
@@ -71,10 +71,10 @@
           "next week Thursday"
         -->
 
-        <vaadin-date-picker label="Label"></vaadin-date-picker>
+        <vaadin-date-range-picker label="Label"></vaadin-date-range-picker>
         <script>
           window.addDemoReadyListener('#date-picker-custom-key-input', function(document) {
-            const datepicker = document.querySelector('vaadin-date-picker');
+            const datepicker = document.querySelector('vaadin-date-range-picker');
             datepicker.set('i18n.parseDate', function(dateString) {
               // See if we get exactly 1 match from the month names
               const matches = datepicker.i18n.monthNames.filter(function(monthName) {

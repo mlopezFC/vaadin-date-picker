@@ -12,12 +12,12 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../vaadin-button/src/vaadin-button.html">
 <link rel="import" href="../../vaadin-themable-mixin/vaadin-themable-mixin.html">
 <link rel="import" href="../../vaadin-element-mixin/vaadin-dir-mixin.html">
-<link rel="import" href="vaadin-month-calendar.html">
-<link rel="import" href="vaadin-infinite-scroller.html">
-<link rel="import" href="vaadin-date-picker-helper.html">
-<link rel="import" href="vaadin-date-picker-styles.html">
+<link rel="import" href="vaadin-date-range-month-calendar.html">
+<link rel="import" href="vaadin-date-range-infinite-scroller.html">
+<link rel="import" href="vaadin-date-range-picker-helper.html">
+<link rel="import" href="vaadin-date-range-picker-styles.html">
 
-<dom-module id="vaadin-date-picker-overlay-content">
+<dom-module id="vaadin-date-range-picker-overlay-content">
   <template>
     <style>
       :host {
@@ -171,9 +171,9 @@ This program is available under Apache License Version 2.0, available at https:/
     </div>
 
     <div id="scrollers" desktop$="[[_desktopMode]]" on-track="_track">
-      <vaadin-infinite-scroller id="monthScroller" on-custom-scroll="_onMonthScroll" on-touchstart="_onMonthScrollTouchStart" buffer-size="3" active="[[initialPosition]]" part="months">
+      <vaadin-date-range-infinite-scroller id="monthScroller" on-custom-scroll="_onMonthScroll" on-touchstart="_onMonthScrollTouchStart" buffer-size="3" active="[[initialPosition]]" part="months">
         <template>
-          <vaadin-month-calendar
+          <vaadin-date-range-month-calendar
             i18n="[[i18n]]"
             month="[[_dateAfterXMonths(index)]]"
             selected-date="{{selectedDate}}"
@@ -185,17 +185,17 @@ This program is available under Apache License Version 2.0, available at https:/
             focused$="[[_focused]]"
             part="month"
             theme$="[[theme]]">
-          </vaadin-month-calendar>
+          </vaadin-date-range-month-calendar>
         </template>
-      </vaadin-infinite-scroller>
-      <vaadin-infinite-scroller id="yearScroller" on-tap="_onYearTap" on-custom-scroll="_onYearScroll" on-touchstart="_onYearScrollTouchStart" buffer-size="12" active="[[initialPosition]]" part="years">
+      </vaadin-date-range-infinite-scroller>
+      <vaadin-date-range-infinite-scroller id="yearScroller" on-tap="_onYearTap" on-custom-scroll="_onYearScroll" on-touchstart="_onYearScrollTouchStart" buffer-size="12" active="[[initialPosition]]" part="years">
         <template>
           <div part="year-number" role="button" current$="[[_isCurrentYear(index)]]" selected$="[[_isSelectedYear(index, selectedDate)]]">
             [[_yearAfterXYears(index)]]
           </div>
           <div part="year-separator" aria-hidden="true"></div>
         </template>
-      </vaadin-infinite-scroller>
+      </vaadin-date-range-infinite-scroller>
     </div>
 
     <div on-touchend="_preventDefault" role="toolbar" part="toolbar">
@@ -220,7 +220,7 @@ This program is available under Apache License Version 2.0, available at https:/
           Vaadin.DirMixin(
             Polymer.GestureEventListeners(Polymer.Element))) {
         static get is() {
-          return 'vaadin-date-picker-overlay-content';
+          return 'vaadin-date-range-picker-overlay-content';
         }
 
         static get properties() {
@@ -330,7 +330,7 @@ This program is available under Apache License Version 2.0, available at https:/
         announceFocusedDate() {
           var focusedDate = this._currentlyFocusedDate();
           var announce = [];
-          if (Vaadin.DatePickerHelper._dateEquals(focusedDate, new Date())) {
+          if (Vaadin.DateRangePickerHelper._dateEquals(focusedDate, new Date())) {
             announce.push(this.i18n.today);
           }
           announce = announce.concat([
@@ -341,7 +341,7 @@ This program is available under Apache License Version 2.0, available at https:/
           ]);
           if (this.showWeekNumbers && this.i18n.firstDayOfWeek === 1) {
             announce.push(this.i18n.week);
-            announce.push(Vaadin.DatePickerHelper._getISOWeekNumber(focusedDate));
+            announce.push(Vaadin.DateRangePickerHelper._getISOWeekNumber(focusedDate));
           }
           this.dispatchEvent(new CustomEvent('iron-announce', {
             bubbles: true,
@@ -451,7 +451,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
         _formatDisplayed(date, formatDate, label) {
           if (date) {
-            return formatDate(Vaadin.DatePickerHelper._extractDateParts(date));
+            return formatDate(Vaadin.DateRangePickerHelper._extractDateParts(date));
           } else {
             return label;
           }
@@ -762,7 +762,7 @@ This program is available under Apache License Version 2.0, available at https:/
                   this._onTodayTap();
                 } else {
                   var focusedDate = this.focusedDate;
-                  if (Vaadin.DatePickerHelper._dateEquals(focusedDate, this.selectedDate)) {
+                  if (Vaadin.DateRangePickerHelper._dateEquals(focusedDate, this.selectedDate)) {
                     this.selectedDate = '';
                     this.focusedDate = focusedDate;
                   } else {
@@ -799,7 +799,7 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _focusClosestDate(focus) {
-          this._focusDate(Vaadin.DatePickerHelper._getClosestDate(focus, [this.minDate, this.maxDate]));
+          this._focusDate(Vaadin.DateRangePickerHelper._getClosestDate(focus, [this.minDate, this.maxDate]));
         }
 
         _moveFocusByDays(days) {

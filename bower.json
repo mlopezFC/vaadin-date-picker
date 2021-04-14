@@ -1,5 +1,5 @@
 {
-  "name": "vaadin-date-picker",
+  "name": "vaadin-date-range-picker",
   "homepage": "https://vaadin.com/components",
   "description": "Polymer element providing a date selection field with scrollable month calendar",
   "authors": [
@@ -14,14 +14,14 @@
     "picker"
   ],
   "main": [
-    "vaadin-date-picker.html",
-    "vaadin-date-picker-light.html",
-    "theme/material/vaadin-date-picker-light.html",
-    "theme/material/vaadin-date-picker.html"
+    "vaadin-date-range-picker.html",
+    "vaadin-date-range-picker-light.html",
+    "theme/material/vaadin-date-range-picker-light.html",
+    "theme/material/vaadin-date-range-picker.html"
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/vaadin/vaadin-date-picker"
+    "url": "git://github.com/vaadin/vaadin-date-range-picker"
   },
   "license": "Apache-2.0",
   "ignore": [

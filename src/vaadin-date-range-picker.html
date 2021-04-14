@@ -9,13 +9,13 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../iron-media-query/iron-media-query.html">
 <link rel="import" href="../../vaadin-themable-mixin/vaadin-themable-mixin.html">
 <link rel="import" href="../../vaadin-control-state-mixin/vaadin-control-state-mixin.html">
-<link rel="import" href="vaadin-date-picker-overlay.html">
-<link rel="import" href="vaadin-date-picker-overlay-content.html">
-<link rel="import" href="vaadin-date-picker-mixin.html">
-<link rel="import" href="vaadin-date-picker-text-field.html">
+<link rel="import" href="vaadin-date-range-picker-overlay.html">
+<link rel="import" href="vaadin-date-range-picker-overlay-content.html">
+<link rel="import" href="vaadin-date-range-picker-mixin.html">
+<link rel="import" href="vaadin-date-range-picker-text-field.html">
 <link rel="import" href="../../vaadin-element-mixin/vaadin-element-mixin.html">
 
-<dom-module id="vaadin-date-picker">
+<dom-module id="vaadin-date-range-picker">
   <template>
     <style>
       :host {
@@ -37,7 +37,7 @@ This program is available under Apache License Version 2.0, available at https:/
     </style>
 
 
-    <vaadin-date-picker-text-field id="input"
+    <vaadin-date-range-picker-text-field id="input"
         role="application"
         autocomplete="off"
         on-focus="_focus"
@@ -59,9 +59,9 @@ This program is available under Apache License Version 2.0, available at https:/
       <slot name="prefix" slot="prefix"></slot>
       <slot name="helper" slot="helper">[[helperText]]</slot>
       <div part="toggle-button" slot="suffix" on-tap="_toggle" role="button" aria-label$="[[i18n.calendar]]" aria-expanded$="[[_getAriaExpanded(opened)]]"></div>
-    </vaadin-date-picker-text-field>
+    </vaadin-date-range-picker-text-field>
 
-    <vaadin-date-picker-overlay
+    <vaadin-date-range-picker-overlay
         id="overlay"
         fullscreen$="[[_fullscreen]]"
         theme$="[[__getOverlayTheme(theme, _overlayInitialized)]]"
@@ -69,7 +69,7 @@ This program is available under Apache License Version 2.0, available at https:/
         on-vaadin-overlay-close="_onOverlayClosed"
         disable-upgrade>
       <template>
-        <vaadin-date-picker-overlay-content
+        <vaadin-date-range-picker-overlay-content
             id="overlay-content" i18n="[[i18n]]"
             fullscreen$="[[_fullscreen]]"
             label="[[label]]"
@@ -83,9 +83,9 @@ This program is available under Apache License Version 2.0, available at https:/
             on-date-tap="_close"
             part="overlay-content"
             theme$="[[__getOverlayTheme(theme, _overlayInitialized)]]">
-        </vaadin-date-picker-overlay-content>
+        </vaadin-date-range-picker-overlay-content>
       </template>
-    </vaadin-date-picker-overlay>
+    </vaadin-date-range-picker-overlay>
 
     <iron-media-query
         query="[[_fullscreenMediaQuery]]"
@@ -97,10 +97,10 @@ This program is available under Apache License Version 2.0, available at https:/
     (function() {
       /**
        *
-       * `<vaadin-date-picker>` is a date selection field which includes a scrollable
+       * `<vaadin-date-range-picker>` is a date selection field which includes a scrollable
        * month calendar view.
        * ```html
-       * <vaadin-date-picker label="Birthday"></vaadin-date-picker>
+       * <vaadin-date-range-picker label="Birthday"></vaadin-date-range-picker>
        * ```
        * ```js
        * datePicker.value = '2016-03-02';
@@ -114,29 +114,29 @@ This program is available under Apache License Version 2.0, available at https:/
        *
        * Part name | Description | Theme for Element
        * ----------------|----------------|----------------
-       * `text-field` | Input element | vaadin-date-picker
-       * `clear-button` | Clear button | vaadin-date-picker
-       * `toggle-button` | Toggle button | vaadin-date-picker
-       * `overlay-content` | The overlay element | vaadin-date-picker
-       * `overlay-header` | Fullscreen mode header | vaadin-date-picker-overlay-content
-       * `label` | Fullscreen mode value/label | vaadin-date-picker-overlay-content
-       * `clear-button` | Fullscreen mode clear button | vaadin-date-picker-overlay-content
-       * `toggle-button` | Fullscreen mode toggle button | vaadin-date-picker-overlay-content
-       * `years-toggle-button` | Fullscreen mode years scroller toggle | vaadin-date-picker-overlay-content
-       * `months` | Months scroller | vaadin-date-picker-overlay-content
-       * `years` | Years scroller | vaadin-date-picker-overlay-content
-       * `toolbar` | Footer bar with buttons | vaadin-date-picker-overlay-content
-       * `today-button` | Today button | vaadin-date-picker-overlay-content
-       * `cancel-button` | Cancel button | vaadin-date-picker-overlay-content
-       * `month` | Month calendar | vaadin-date-picker-overlay-content
-       * `year-number` | Year number | vaadin-date-picker-overlay-content
-       * `year-separator` | Year separator | vaadin-date-picker-overlay-content
-       * `month-header` | Month title | vaadin-month-calendar
-       * `weekdays` | Weekday container | vaadin-month-calendar
-       * `weekday` | Weekday element | vaadin-month-calendar
-       * `week-numbers` | Week numbers container | vaadin-month-calendar
-       * `week-number` | Week number element | vaadin-month-calendar
-       * `date` | Date element | vaadin-month-calendar
+       * `text-field` | Input element | vaadin-date-range-picker
+       * `clear-button` | Clear button | vaadin-date-range-picker
+       * `toggle-button` | Toggle button | vaadin-date-range-picker
+       * `overlay-content` | The overlay element | vaadin-date-range-picker
+       * `overlay-header` | Fullscreen mode header | vaadin-date-range-picker-overlay-content
+       * `label` | Fullscreen mode value/label | vaadin-date-range-picker-overlay-content
+       * `clear-button` | Fullscreen mode clear button | vaadin-date-range-picker-overlay-content
+       * `toggle-button` | Fullscreen mode toggle button | vaadin-date-range-picker-overlay-content
+       * `years-toggle-button` | Fullscreen mode years scroller toggle | vaadin-date-range-picker-overlay-content
+       * `months` | Months scroller | vaadin-date-range-picker-overlay-content
+       * `years` | Years scroller | vaadin-date-range-picker-overlay-content
+       * `toolbar` | Footer bar with buttons | vaadin-date-range-picker-overlay-content
+       * `today-button` | Today button | vaadin-date-range-picker-overlay-content
+       * `cancel-button` | Cancel button | vaadin-date-range-picker-overlay-content
+       * `month` | Month calendar | vaadin-date-range-picker-overlay-content
+       * `year-number` | Year number | vaadin-date-range-picker-overlay-content
+       * `year-separator` | Year separator | vaadin-date-range-picker-overlay-content
+       * `month-header` | Month title | vaadin-date-range-month-calendar
+       * `weekdays` | Weekday container | vaadin-date-range-month-calendar
+       * `weekday` | Weekday element | vaadin-date-range-month-calendar
+       * `week-numbers` | Week numbers container | vaadin-date-range-month-calendar
+       * `week-number` | Week number element | vaadin-date-range-month-calendar
+       * `date` | Date element | vaadin-date-range-month-calendar
        *
        * See [ThemableMixin – how to apply styles for shadow parts](https://github.com/vaadin/vaadin-themable-mixin/wiki)
        *
@@ -154,36 +154,36 @@ This program is available under Apache License Version 2.0, available at https:/
        * `selected` | Set on the selected date | date
        *
        * If you want to replace the default input field with a custom implementation, you should use the
-       * [`<vaadin-date-picker-light>`](#vaadin-date-picker-light) element.
+       * [`<vaadin-date-range-picker-light>`](#vaadin-date-range-picker-light) element.
        *
-       * In addition to `<vaadin-date-picker>` itself, the following internal
+       * In addition to `<vaadin-date-range-picker>` itself, the following internal
        * components are themable:
        *
        * - `<vaadin-text-field>`
-       * - `<vaadin-date-picker-overlay>`
-       * - `<vaadin-date-picker-overlay-content>`
-       * - `<vaadin-month-calendar>`
+       * - `<vaadin-date-range-picker-overlay>`
+       * - `<vaadin-date-range-picker-overlay-content>`
+       * - `<vaadin-date-range-month-calendar>`
        *
-       * Note: the `theme` attribute value set on `<vaadin-date-picker>` is
+       * Note: the `theme` attribute value set on `<vaadin-date-range-picker>` is
        * propagated to the internal themable components listed above.
        *
        * @memberof Vaadin
        * @mixes Vaadin.ElementMixin
        * @mixes Vaadin.ControlStateMixin
        * @mixes Vaadin.ThemableMixin
-       * @mixes Vaadin.DatePickerMixin
+       * @mixes Vaadin.DateRangePickerMixin
        * @mixes Polymer.GestureEventListeners
        * @demo demo/index.html
        */
-      class DatePickerElement extends
+      class DateRangePickerElement extends
         Vaadin.ElementMixin(
           Vaadin.ControlStateMixin(
             Vaadin.ThemableMixin(
-              Vaadin.DatePickerMixin(
+              Vaadin.DateRangePickerMixin(
                 Polymer.GestureEventListeners(Polymer.Element))))) {
 
         static get is() {
-          return 'vaadin-date-picker';
+          return 'vaadin-date-range-picker';
         }
 
         static get version() {
@@ -339,12 +339,12 @@ This program is available under Apache License Version 2.0, available at https:/
         }
       }
 
-      customElements.define(DatePickerElement.is, DatePickerElement);
+      customElements.define(DateRangePickerElement.is, DateRangePickerElement);
 
       /**
        * @namespace Vaadin
        */
-      window.Vaadin.DatePickerElement = DatePickerElement;
+      window.Vaadin.DateRangePickerElement = DateRangePickerElement;
     })();
   </script>
 </dom-module>

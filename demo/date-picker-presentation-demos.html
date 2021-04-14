@@ -7,10 +7,10 @@
     </style>
 
     <h3>Date range</h3>
-    <vaadin-demo-snippet id="date-picker-date-range" when-defined="vaadin-date-picker">
+    <vaadin-demo-snippet id="date-picker-date-range" when-defined="vaadin-date-range-picker">
       <template preserve-content>
-        <vaadin-date-picker id="start" label="From date"></vaadin-date-picker>
-        <vaadin-date-picker id="end" label="To date"></vaadin-date-picker>
+        <vaadin-date-range-picker id="start" label="From date"></vaadin-date-range-picker>
+        <vaadin-date-range-picker id="end" label="To date"></vaadin-date-range-picker>
 
         <p>Selected range: <span></span></p>
         <script>
@@ -46,12 +46,12 @@
 
     <h3>Date picker with week numbers</h3>
     <p>Week numbers are only supported for locales that start the week on Monday.</p>
-    <vaadin-demo-snippet id="date-picker-with-week-numbers" when-defined="vaadin-date-picker">
+    <vaadin-demo-snippet id="date-picker-with-week-numbers" when-defined="vaadin-date-range-picker">
       <template preserve-content>
-        <vaadin-date-picker show-week-numbers label="Label"></vaadin-date-picker>
+        <vaadin-date-range-picker show-week-numbers label="Label"></vaadin-date-range-picker>
         <script>
           window.addDemoReadyListener('#date-picker-with-week-numbers', function(document) {
-            const datepicker = document.querySelector('vaadin-date-picker');
+            const datepicker = document.querySelector('vaadin-date-range-picker');
             datepicker.set('i18n.firstDayOfWeek', 1);
           });
         </script>

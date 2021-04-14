@@ -9,8 +9,8 @@
   <script src="common.js"></script>
   <link rel="import" href="../../test-fixture/test-fixture.html">
 
-  <link rel="import" href="../src/vaadin-date-picker-overlay-content.html">
-  <link rel="import" href="../src/vaadin-date-picker.html">
+  <link rel="import" href="../src/vaadin-date-range-picker-overlay-content.html">
+  <link rel="import" href="../src/vaadin-date-range-picker.html">
   <link rel="import" href="../../vaadin-dialog/src/vaadin-dialog.html">
   <link rel="import" href="../../polymer/lib/utils/render-status.html">
 </head>
@@ -19,7 +19,7 @@
 
   <test-fixture id="overlay">
     <template>
-      <vaadin-date-picker-overlay-content></vaadin-date-picker-overlay-content>
+      <vaadin-date-range-picker-overlay-content></vaadin-date-range-picker-overlay-content>
     </template>
   </test-fixture>
 
@@ -27,7 +27,7 @@
     <template>
       <vaadin-dialog modeless>
         <template>
-          <vaadin-date-picker></vaadin-date-picker>
+          <vaadin-date-range-picker></vaadin-date-range-picker>
         </template>
       </vaadin-dialog>
     </template>
@@ -46,7 +46,7 @@
       }
     }
 
-    describe('vaadin-date-picker-overlay', () => {
+    describe('vaadin-date-range-picker-overlay', () => {
       var overlay;
 
       beforeEach(done => {
@@ -138,7 +138,7 @@
 
         it('should set ignoreTaps to calendar on scroll', done => {
           listenForEvent(overlay.$.monthScroller.$.scroller, 'scroll', () => {
-            expect(overlay.$.monthScroller.querySelector('vaadin-month-calendar').ignoreTaps).to.be.true;
+            expect(overlay.$.monthScroller.querySelector('vaadin-date-range-month-calendar').ignoreTaps).to.be.true;
             done();
           });
 
@@ -380,7 +380,7 @@
       it('should not end up behind the dialog overlay on mousedown', (done) => {
         dialog.opened = true;
         const dialogOverlay = dialog.$.overlay;
-        const datePicker = dialog.$.overlay.querySelector('vaadin-date-picker');
+        const datePicker = dialog.$.overlay.querySelector('vaadin-date-range-picker');
         const datePickerOverlay = datePicker.$.overlay;
     
         datePicker.opened = true;
@@ -395,7 +395,7 @@
       it('should not end up behind the dialog overlay on touchstart', (done) => {
         dialog.opened = true;
         const dialogOverlay = dialog.$.overlay;
-        const datePicker = dialog.$.overlay.querySelector('vaadin-date-picker');
+        const datePicker = dialog.$.overlay.querySelector('vaadin-date-range-picker');
         const datePickerOverlay = datePicker.$.overlay;
 
         datePicker.opened = true;

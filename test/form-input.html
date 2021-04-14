@@ -9,37 +9,37 @@
   <link rel="import" href="../../test-fixture/test-fixture.html">
 
   <link rel="import" href="../../iron-form/iron-form.html">
-  <link rel="import" href="../vaadin-date-picker.html">
+  <link rel="import" href="../vaadin-date-range-picker.html">
   <link rel="import" href="not-animated-styles.html">
 </head>
 
 <body>
   <script>
-    customElements.whenDefined('vaadin-date-picker').then(() => {
-      class DatePicker2016Element extends customElements.get('vaadin-date-picker') {
+    customElements.whenDefined('vaadin-date-range-picker').then(() => {
+      class DatePicker2016Element extends customElements.get('vaadin-date-range-picker') {
         checkValidity(value) {
           return new Date(value).getFullYear() === 2016;
         }
       }
-      customElements.define('vaadin-date-picker-2016', DatePicker2016Element);
+      customElements.define('vaadin-date-range-picker-2016', DatePicker2016Element);
     });
   </script>
 
   <test-fixture id="custom-validation">
     <template>
-      <vaadin-date-picker-2016></vaadin-date-picker-2016>
+      <vaadin-date-range-picker-2016></vaadin-date-range-picker-2016>
     </template>
   </test-fixture>
 
   <test-fixture id="datepicker">
     <template>
-      <vaadin-date-picker></vaadin-date-picker>
+      <vaadin-date-range-picker></vaadin-date-range-picker>
     </template>
   </test-fixture>
 
   <test-fixture id="datepicker-required">
     <template>
-      <vaadin-date-picker required></vaadin-date-picker>
+      <vaadin-date-range-picker required></vaadin-date-range-picker>
     </template>
   </test-fixture>
 
@@ -47,7 +47,7 @@
     <template>
       <iron-form>
         <form>
-          <vaadin-date-picker name="foo"></vaadin-date-picker>
+          <vaadin-date-range-picker name="foo"></vaadin-date-range-picker>
         </form>
       </iron-form>
     </template>
@@ -255,7 +255,7 @@
 
       beforeEach(done => {
         ironForm = fixture('datepicker-in-form');
-        datepicker = ironForm.querySelector('vaadin-date-picker');
+        datepicker = ironForm.querySelector('vaadin-date-range-picker');
         setTimeout(done);
       });
 

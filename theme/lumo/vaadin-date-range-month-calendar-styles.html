@@ -4,7 +4,7 @@
 <link rel="import" href="../../../vaadin-lumo-styles/style.html">
 <link rel="import" href="../../../vaadin-lumo-styles/typography.html">
 
-<dom-module id="lumo-month-calendar" theme-for="vaadin-month-calendar">
+<dom-module id="lumo-month-calendar" theme-for="vaadin-date-range-month-calendar">
   <template>
     <style>
       :host {
@@ -94,10 +94,10 @@
       }
 
       :host(:not([focused])) [part="date"][focused]::before {
-        animation: vaadin-date-picker-month-calendar-focus-date 1.4s infinite;
+        animation: vaadin-date-range-picker-month-calendar-focus-date 1.4s infinite;
       }
 
-      @keyframes vaadin-date-picker-month-calendar-focus-date {
+      @keyframes vaadin-date-range-picker-month-calendar-focus-date {
         50% {
           box-shadow: 0 0 0 2px transparent;
         }
@@ -146,7 +146,7 @@
 
 <custom-style>
   <style>
-    @keyframes vaadin-date-picker-month-calendar-focus-date {
+    @keyframes vaadin-date-range-picker-month-calendar-focus-date {
       50% {
         box-shadow: 0 0 0 2px transparent;
       }

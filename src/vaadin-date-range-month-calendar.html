@@ -7,10 +7,10 @@ This program is available under Apache License Version 2.0, available at https:/
 <link rel="import" href="../../polymer/polymer-element.html">
 <link rel="import" href="../../polymer/lib/elements/dom-repeat.html">
 <link rel="import" href="../../polymer/lib/mixins/gesture-event-listeners.html">
-<link rel="import" href="vaadin-date-picker-helper.html">
+<link rel="import" href="vaadin-date-range-picker-helper.html">
 <link rel="import" href="../../vaadin-themable-mixin/vaadin-themable-mixin.html">
 
-<dom-module id="vaadin-month-calendar">
+<dom-module id="vaadin-date-range-month-calendar">
   <template>
     <style>
       :host {
@@ -96,7 +96,7 @@ This program is available under Apache License Version 2.0, available at https:/
       class MonthCalendarElement extends Vaadin.ThemableMixin(Polymer.GestureEventListeners(Polymer.Element)) {
 
         static get is() {
-          return 'vaadin-month-calendar';
+          return 'vaadin-date-range-month-calendar';
         }
 
         static get properties() {
@@ -175,11 +175,11 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _dateEquals(date1, date2) {
-          return Vaadin.DatePickerHelper._dateEquals(date1, date2);
+          return Vaadin.DateRangePickerHelper._dateEquals(date1, date2);
         }
 
         _dateAllowed(date, min, max) {
-          return Vaadin.DatePickerHelper._dateAllowed(date, min, max);
+          return Vaadin.DateRangePickerHelper._dateAllowed(date, min, max);
         }
 
         /* Returns true if all the dates in the month are out of the allowed range */
@@ -308,7 +308,7 @@ This program is available under Apache License Version 2.0, available at https:/
             });
           }
 
-          return Vaadin.DatePickerHelper._getISOWeekNumber(date);
+          return Vaadin.DateRangePickerHelper._getISOWeekNumber(date);
         }
 
         _getWeekNumbers(dates) {

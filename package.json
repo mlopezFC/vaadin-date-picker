@@ -1,9 +1,9 @@
 {
-  "name": "@vaadin/vaadin-date-picker",
+  "name": "@vaadin/vaadin-date-range-picker",
   "version": "4.4.1",
   "description": "Polymer element providing a date selection field with scrollable month calendar",
-  "main": "vaadin-date-picker.html",
-  "repository": "vaadin/vaadin-date-picker",
+  "main": "vaadin-date-range-picker.html",
+  "repository": "vaadin/vaadin-date-range-picker",
   "keywords": [
     "Vaadin",
     "date-picker",
@@ -14,7 +14,7 @@
   "author": "Vaadin Ltd",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/vaadin/vaadin-date-picker/issues"
+    "url": "https://github.com/vaadin/vaadin-date-range-picker/issues"
   },
   "homepage": "https://vaadin.com/components",
   "files": [

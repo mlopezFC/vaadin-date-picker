@@ -1,4 +1,4 @@
-gemini.suite('vaadin-date-picker', function(rootSuite) {
+gemini.suite('vaadin-date-range-picker', function(rootSuite) {
   function wait(actions, find) {
     return actions
       .waitForJSCondition(function(window) {

@@ -7,7 +7,7 @@
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../../test-fixture/test-fixture.html">
 
-  <link rel="import" href="../vaadin-date-picker.html">
+  <link rel="import" href="../vaadin-date-range-picker.html">
   <link rel="import" href="not-animated-styles.html">
   <script src="common.js"></script>
 </head>
@@ -16,7 +16,7 @@
 
   <test-fixture id="datepicker-theme">
     <template>
-      <vaadin-date-picker theme="foo"></vaadin-date-picker>
+      <vaadin-date-range-picker theme="foo"></vaadin-date-range-picker>
     </template>
   </test-fixture>
 
@@ -63,7 +63,7 @@
 
       it('should propagate theme attribute to month calendar', () => {
         const monthCalendar = overlayContent.$.monthScroller
-          .querySelector('vaadin-month-calendar');
+          .querySelector('vaadin-date-range-month-calendar');
         expect(monthCalendar.getAttribute('theme')).to.equal('foo');
       });
     });
