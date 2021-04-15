@@ -31,17 +31,41 @@ This program is available under Apache License Version 2.0, available at https:/
       }
 
       [part="text-field"] {
-        width: 100%;
+        width: 48%;
         min-width: 0;
       }
     </style>
 
 
-    <vaadin-date-range-picker-text-field id="input"
+    <vaadin-date-range-picker-text-field id="startInput"
         role="application"
         autocomplete="off"
         on-focus="_focus"
-        value="{{_userInputValue}}"
+        value="{{_userInputStartValue}}"
+        invalid="[[invalid]]"
+        label="[[label]]"
+        name="[[name]]"
+        placeholder="[[placeholder]]"
+        required="[[required]]"
+        disabled="[[disabled]]"
+        readonly="[[readonly]]"
+        error-message="[[errorMessage]]"
+        clear-button-visible="[[clearButtonVisible]]"
+        aria-label$="[[label]]"
+        part="text-field"
+        helper-text="[[helperText]]"
+        theme$="[[theme]]"
+      >
+      <slot name="prefix" slot="prefix"></slot>
+      <slot name="helper" slot="helper">[[helperText]]</slot>
+      <div part="toggle-button" slot="suffix" on-tap="_toggle" role="button" aria-label$="[[i18n.calendar]]" aria-expanded$="[[_getAriaExpanded(opened)]]"></div>
+    </vaadin-date-range-picker-text-field>
+
+    <vaadin-date-range-picker-text-field id="endInput"
+        role="application"
+        autocomplete="off"
+        on-focus="_focus"
+        value="{{_userInputEndValue}}"
         invalid="[[invalid]]"
         label="[[label]]"
         name="[[name]]"
@@ -254,13 +278,15 @@ This program is available under Apache License Version 2.0, available at https:/
             },
 
             /** @private */
-            _userInputValue: String
+            _userInputStartValue: String,
+            _userInputEndValue: String
           };
         }
 
         static get observers() {
           return [
-            '_userInputValueChanged(_userInputValue)',
+            '_userInputStartValueChanged(_userInputStartValue)',
+            '_userInputEndValueChanged(_userInputEndValue)',
             '_setClearButtonLabel(i18n.clear)'
           ];
         }
@@ -304,7 +330,7 @@ This program is available under Apache License Version 2.0, available at https:/
          * @protected
          */
         _input() {
-          return this.$.input;
+          return this.$.startInput;
         }
 
         set _inputValue(value) {

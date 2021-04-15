@@ -996,9 +996,24 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @private */
-    _userInputValueChanged(value) {
-      if (this.opened && this._inputValue) {
-        const parsedDate = this._getParsedDate();
+    _userInputStartValueChanged(value) {
+      if (this.opened && this._inputStartValue) {
+        const parsedDate = this._getParsedDate(_inputStartValue);
+
+        if (this._isValidDate(parsedDate)) {
+          this._ignoreFocusedDateChange = true;
+          if (!Vaadin.DateRangePickerHelper._dateEquals(parsedDate, this._focusedDate)) {
+            this._focusedDate = parsedDate;
+          }
+          this._ignoreFocusedDateChange = false;
+        }
+      }
+    }
+
+    /** @private */
+    _userInputEndValueChanged(value) {
+      if (this.opened && this._inputEndValue) {
+        const parsedDate = this._getParsedDate(_inputEndValue);
 
         if (this._isValidDate(parsedDate)) {
           this._ignoreFocusedDateChange = true;
