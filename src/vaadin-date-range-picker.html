@@ -40,7 +40,7 @@ This program is available under Apache License Version 2.0, available at https:/
     <vaadin-date-range-picker-text-field id="startInput"
         role="application"
         autocomplete="off"
-        on-focus="_focus"
+        on-focus="_focusStart"
         value="{{_userInputStartValue}}"
         invalid="[[invalid]]"
         label="[[label]]"
@@ -64,24 +64,24 @@ This program is available under Apache License Version 2.0, available at https:/
     <vaadin-date-range-picker-text-field id="endInput"
         role="application"
         autocomplete="off"
-        on-focus="_focus"
+        on-focus="_focusEnd"
         value="{{_userInputEndValue}}"
         invalid="[[invalid]]"
-        label="[[label]]"
+        label="[[endLabel]]"
         name="[[name]]"
-        placeholder="[[placeholder]]"
+        placeholder="[[endPlaceholder]]"
         required="[[required]]"
         disabled="[[disabled]]"
         readonly="[[readonly]]"
         error-message="[[errorMessage]]"
         clear-button-visible="[[clearButtonVisible]]"
-        aria-label$="[[label]]"
+        aria-label$="[[endLabel]]"
         part="text-field"
-        helper-text="[[helperText]]"
+        helper-end-text="[[helperEndText]]"
         theme$="[[theme]]"
       >
       <slot name="prefix" slot="prefix"></slot>
-      <slot name="helper" slot="helper">[[helperText]]</slot>
+      <slot name="helper" slot="helper">[[helperEndText]]</slot>
       <div part="toggle-button" slot="suffix" on-tap="_toggle" role="button" aria-label$="[[i18n.calendar]]" aria-expanded$="[[_getAriaExpanded(opened)]]"></div>
     </vaadin-date-range-picker-text-field>
 
@@ -97,14 +97,16 @@ This program is available under Apache License Version 2.0, available at https:/
             id="overlay-content" i18n="[[i18n]]"
             fullscreen$="[[_fullscreen]]"
             label="[[label]]"
-            selected-date="{{_selectedDate}}"
+            selected-start-date="{{_selectedStartDate}}"
+            selected-end-date="{{_selectedEndDate}}"
+            selecting-start-date="{{_selectingStartDate}}"
             slot="dropdown-content"
             focused-date="{{_focusedDate}}"
             show-week-numbers="[[showWeekNumbers]]"
             min-date="[[_minDate]]"
             max-date="[[_maxDate]]"
             role="dialog"
-            on-date-tap="_close"
+            on-date-tap="_closeOnTap"
             part="overlay-content"
             theme$="[[__getOverlayTheme(theme, _overlayInitialized)]]">
         </vaadin-date-range-picker-overlay-content>
@@ -248,10 +250,24 @@ This program is available under Apache License Version 2.0, available at https:/
             placeholder: String,
 
             /**
+             * A placeholder string in addition to the label. If this is set, the label will always float.
+             */
+             endPlaceholder: String,
+
+            /**
              * String used for the helper text.
              * @attr {string} helper-text
              */
             helperText: {
+              type: String,
+              value: ''
+            },
+
+            /**
+             * String used for the helper end text.
+             * @attr {string} helper-text
+             */
+             helperEndText: {
               type: String,
               value: ''
             },
@@ -296,12 +312,20 @@ This program is available under Apache License Version 2.0, available at https:/
           super.ready();
 
           // In order to have synchronized invalid property, we need to use the same validate logic.
-          Polymer.RenderStatus.afterNextRender(this, () => this._inputElement.validate = () => {});
+          Polymer.RenderStatus.afterNextRender(this, () => this._inputStartElement.validate = () => {});
+          Polymer.RenderStatus.afterNextRender(this, () => this._inputEndElement.validate = () => {});
 
-          this._inputElement.addEventListener('change', (e) => {
+          this._inputStartElement.addEventListener('change', (e) => {
             // For change event on text-field blur, after the field is cleared,
             // we schedule change event to be dispatched on date-picker blur.
-            if (this._inputElement.value === '' && !e.__fromClearButton) {
+            if (this._inputStartElement.value === '' && !e.__fromClearButton) {
+              this.__dispatchChange = true;
+            }
+          });
+          this._inputEndElement.addEventListener('change', (e) => {
+            // For change event on text-field blur, after the field is cleared,
+            // we schedule change event to be dispatched on date-picker blur.
+            if (this._inputEndElement.value === '' && !e.__fromClearButton) {
               this.__dispatchChange = true;
             }
           });
@@ -329,17 +353,34 @@ This program is available under Apache License Version 2.0, available at https:/
          * @return {HTMLElement}
          * @protected
          */
-        _input() {
+         _inputStart() {
           return this.$.startInput;
         }
 
-        set _inputValue(value) {
-          this._inputElement.value = value;
+        /**
+         * @return {HTMLElement}
+         * @protected
+         */
+         _inputEnd() {
+          return this.$.endInput;
+        }
+
+        set _inputStartValue(value) {
+          this._inputStartElement.value = value;
         }
 
         /** @return {string} */
-        get _inputValue() {
-          return this._inputElement.value;
+        get _inputStartValue() {
+          return this._inputStartElement.value;
+        }
+
+        set _inputEndValue(value) {
+          this._inputEndElement.value = value;
+        }
+
+        /** @return {string} */
+        get _inputEndValue() {
+          return this._inputEndElement.value;
         }
 
         /** @private */
@@ -353,14 +394,14 @@ This program is available under Apache License Version 2.0, available at https:/
          * @protected
          */
         get focusElement() {
-          return this._input() || this;
+          return this._inputStart() || this;
         }
 
         /** @private */
         _setClearButtonLabel(i18nClear) {
           // FIXME(platosha): expose i18n API in <vaadin-text-field>
           // https://github.com/vaadin/vaadin-text-field/issues/348
-          this._inputElement.shadowRoot.querySelector('[part="clear-button"]')
+          this._inputStartElement.shadowRoot.querySelector('[part="clear-button"]')
             .setAttribute('aria-label', i18nClear);
         }
       }

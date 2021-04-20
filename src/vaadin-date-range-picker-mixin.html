@@ -21,12 +21,31 @@ This program is available under Apache License Version 2.0, available at https:/
     static get properties() {
       return {
         /**
-         * The current selected date.
+         * The current selected start date.
          * @type {Date | undefined}
          * @protected
          */
-        _selectedDate: {
+        _selectedStartDate: {
           type: Date
+        },
+
+        /**
+         * The current selected end date.
+         * @type {Date | undefined}
+         * @protected
+         */
+         _selectedEndDate: {
+          type: Date
+        },
+
+        /**
+         * True if currently selecting the 
+         * StartDate, false if selecting EndDate
+         * @type {Boolean | undefined}
+         * @protected
+         */
+         _selectingStartDate: {
+          type: Boolean
         },
 
         /**
@@ -47,6 +66,22 @@ This program is available under Apache License Version 2.0, available at https:/
         value: {
           type: String,
           observer: '_valueChanged',
+          notify: true,
+          value: ''
+        },
+
+        /**
+         * The value for this element.
+         *
+         * Supported date formats:
+         * - ISO 8601 `"YYYY-MM-DD"` (default)
+         * - 6-digit extended ISO 8601 `"+YYYYYY-MM-DD"`, `"-YYYYYY-MM-DD"`
+         *
+         * @type {string}
+         */
+        endValue: {
+          type: String,
+          observer: '_endValueChanged',
           notify: true,
           value: ''
         },
@@ -79,6 +114,11 @@ This program is available under Apache License Version 2.0, available at https:/
          * The label for this element.
          */
         label: String,
+
+        /**
+         * The label for this element.
+         */
+        endLabel: String,
 
         /**
          * Set true to open the date selector overlay.
@@ -339,7 +379,8 @@ This program is available under Apache License Version 2.0, available at https:/
     static get observers() {
       return [
         '_updateHasValue(value)',
-        '_selectedDateChanged(_selectedDate, i18n.formatDate)',
+        '_selectedStartDateChanged(_selectedStartDate, i18n.formatDate)',
+        '_selectedEndDateChanged(_selectedEndDate, i18n.formatDate)',
         '_focusedDateChanged(_focusedDate, i18n.formatDate)',
         '_announceFocusedDate(_focusedDate, opened, _ignoreAnnounce)'
       ];
@@ -354,7 +395,8 @@ This program is available under Apache License Version 2.0, available at https:/
 
       const isClearButton = e => {
         const path = e.composedPath();
-        const inputIndex = path.indexOf(this._inputElement);
+        // FIX: Just using inputStartElement, but don't know what to do
+        const inputIndex = path.indexOf(this._inputStartElement);
         return path.slice(0, inputIndex)
           .filter(el => el.getAttribute && el.getAttribute('part') === 'clear-button')
           .length === 1;
@@ -376,23 +418,29 @@ This program is available under Apache License Version 2.0, available at https:/
         }
       });
       this.addEventListener('keydown', this._onKeydown.bind(this));
-      this.addEventListener('input', this._onUserInput.bind(this));
+      this._inputStartElement.addEventListener('input', this._onUserInputStart.bind(this));
+      this._inputEndElement.addEventListener('input', this._onUserInputEnd.bind(this));
       this.addEventListener('focus', e => this._noInput && e.target.blur());
       this.addEventListener('blur', e => {
         if (!this.opened) {
           if (this.autoOpenDisabled) {
-            const parsedDate = this._getParsedDate();
-            if (this._isValidDate(parsedDate)) {
-              this._selectedDate = parsedDate;
+            const startParsedDate = this._getParsedDate(this._inputStartValue);
+            if (this._isValidDate(startParsedDate)) {
+              this._selectedStartDate = startParsedDate;
+            }
+            const endParsedDate = this._getParsedDate(this._inputEndValue);
+            if (this._isValidDate(endParsedDate)) {
+              this._selectedEndDate = endParsedDate;
             }
           }
 
-          if (this._inputElement.value === '' && this.__dispatchChange) {
-            this.validate();
+          // FIX: Just using inputStartElement, but don't know what to do
+          if (this._inputStartElement.value === '' && this.__dispatchChange) {
+            this.validateStart();
             this.value = '';
             this.__dispatchChange = false;
           } else {
-            this.validate();
+            this.validateStart();
           }
         }
       });
@@ -447,6 +495,20 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @private */
+    _closeOnTap(e) {
+      if (this._selectingStartDate) {
+        this._selectingStartDate = false;
+      } else {
+        this._selectingStartDate = true;
+        if (e) {
+        e.stopPropagation();
+        }
+        this._focus();
+        this.close();
+      }
+    }
+
+      /** @private */
     _close(e) {
       if (e) {
         e.stopPropagation();
@@ -468,18 +530,27 @@ This program is available under Apache License Version 2.0, available at https:/
      * @return {HTMLElement}
      * @protected
      */
-    get _inputElement() {
-      return this._input();
+    get _inputStartElement() {
+      return this._inputStart();
+    }
+
+    /**
+     * @return {HTMLElement}
+     * @protected
+     */
+    get _inputEndElement() {
+      return this._inputEnd();
     }
 
     /** @private */
+    /** FIX: Just replaced with inputStartElement, don't know what to do */
     get _nativeInput() {
-      if (this._inputElement) {
+      if (this._inputStartElement) {
         // vaadin-text-field's input is focusElement
         // iron-input's input is inputElement
-        return this._inputElement.focusElement ? this._inputElement.focusElement :
-          this._inputElement.inputElement ? this._inputElement.inputElement :
-            window.unwrap ? window.unwrap(this._inputElement) : this._inputElement;
+        return this._inputStartElement.focusElement ? this._inputStartElement.focusElement :
+          this._inputStartElement.inputElement ? this._inputStartElement.inputElement :
+            window.unwrap ? window.unwrap(this._inputStartElement) : this._inputStartElement;
       }
     }
 
@@ -500,7 +571,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
     /** @private */
     _isNoInput(fullscreen, ios, i18n) {
-      return !this._inputElement || fullscreen || ios || !i18n.parseDate;
+      return !this._inputStartElement || !this._inputEndElement || fullscreen || ios || !i18n.parseDate;
     }
 
     /** @private */
@@ -543,7 +614,7 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @private */
-    _selectedDateChanged(selectedDate, formatDate) {
+    _selectedStartDateChanged(selectedDate, formatDate) {
       if (selectedDate === undefined || formatDate === undefined) {
         return;
       }
@@ -552,11 +623,35 @@ This program is available under Apache License Version 2.0, available at https:/
       }
       const value = this._formatISO(selectedDate);
 
-      this.__keepInputValue || this._applyInputValue(selectedDate);
+      this.__keepInputValue || this._applyStartInputValue(selectedDate);
+
+      // TODO: See issue with splitting
+      if (value !== this.value) {
+        this.validateStart();
+        //this.value = value;
+      }
+      this.__userInputOccurred = false;
+      this.__dispatchChange = false;
+      this._ignoreFocusedDateChange = true;
+      this._focusedDate = selectedDate;
+      this._ignoreFocusedDateChange = false;
+    }
+
+    /** @private */
+    _selectedEndDateChanged(selectedDate, formatDate) {
+      if (selectedDate === undefined || formatDate === undefined) {
+        return;
+      }
+      if (this.__userInputOccurred) {
+        this.__dispatchChange = true;
+      }
+      const value = this._formatISO(selectedDate);
+
+      this.__keepInputValue || this._applyEndInputValue(selectedDate);
 
       if (value !== this.value) {
-        this.validate();
-        this.value = value;
+        this.validateStart();
+        //this.value = value;
       }
       this.__userInputOccurred = false;
       this.__dispatchChange = false;
@@ -572,7 +667,8 @@ This program is available under Apache License Version 2.0, available at https:/
       }
       this.__userInputOccurred = true;
       if (!this._ignoreFocusedDateChange && !this._noInput) {
-        this._applyInputValue(focusedDate);
+        // FIX: Just using start value, don't know what to do
+        this._applyStartInputValue(focusedDate);
       }
     }
 
@@ -601,13 +697,13 @@ This program is available under Apache License Version 2.0, available at https:/
 
       var date = this._parseDate(value);
       if (!date) {
-        this.value = oldValue;
-        return;
+        return false;
       }
       if (!Vaadin.DateRangePickerHelper._dateEquals(this[property], date)) {
         this[property] = date;
-        this.value && this.validate();
+        this.value && this.validateStart() && this.validateEnd();
       }
+      return true;
     }
 
     /** @private */
@@ -615,17 +711,25 @@ This program is available under Apache License Version 2.0, available at https:/
       if (this.__dispatchChange) {
         this.dispatchEvent(new CustomEvent('change', {bubbles: true}));
       }
-      this._handleDateChange('_selectedDate', value, oldValue);
+      // FIX: separate string in two dates
+      if (!this._handleDateChange('_selectedStartDate', value, oldValue)) {
+        // FIX: restauro el start
+        //this.value = oldValue;
+      }
     }
 
     /** @private */
     _minChanged(value, oldValue) {
-      this._handleDateChange('_minDate', value, oldValue);
+      if (!this._handleDateChange('_minDate', value, oldValue)) {
+        this.min = oldValue;
+      }
     }
 
     /** @private */
     _maxChanged(value, oldValue) {
-      this._handleDateChange('_maxDate', value, oldValue);
+      if (!this._handleDateChange('_maxDate', value, oldValue)) {
+        this.max = oldValue;
+      }
     }
 
     /** @private */
@@ -634,7 +738,8 @@ This program is available under Apache License Version 2.0, available at https:/
         return;
       }
       if (!this._fullscreen) {
-        const inputRect = this._inputElement.getBoundingClientRect();
+        // FIX: Just used _inputStartElement don't know what to do
+        const inputRect = this._inputStartElement.getBoundingClientRect();
 
         const bottomAlign = inputRect.top > window.innerHeight / 2;
         const rightAlign = inputRect.left + this.clientWidth / 2 > window.innerWidth / 2;
@@ -662,8 +767,9 @@ This program is available under Apache License Version 2.0, available at https:/
         }
       }
 
+      // FIX: Just used inputStartElement, don't know what to do
       this.$.overlay.setAttribute('dir',
-        getComputedStyle(this._inputElement).getPropertyValue('direction')
+        getComputedStyle(this._inputStartElement).getPropertyValue('direction')
       );
       this._overlayContent._repositionYearScroller();
     }
@@ -681,7 +787,7 @@ This program is available under Apache License Version 2.0, available at https:/
 
       var parsedInitialPosition = this._parseDate(this.initialPosition);
 
-      var initialPosition = this._selectedDate || this._overlayContent.initialPosition ||
+      var initialPosition = this._selectedStartDate || this._overlayContent.initialPosition ||
         parsedInitialPosition || new Date();
 
       if (parsedInitialPosition ||
@@ -743,21 +849,39 @@ This program is available under Apache License Version 2.0, available at https:/
     /** @private */
     _selectParsedOrFocusedDate() {
       // Select the parsed input or focused date
+      // FIX: for now using the start date for this
       this._ignoreFocusedDateChange = true;
+      // for start date
       if (this.i18n.parseDate) {
-        const inputValue = this._inputValue || '';
+        const inputValue = this._inputStartValue || '';
         const parsedDate = this._getParsedDate(inputValue);
 
         if (this._isValidDate(parsedDate)) {
-          this._selectedDate = parsedDate;
+          this._selectedStartDate = parsedDate;
         } else {
           this.__keepInputValue = true;
-          this._selectedDate = null;
+          this._selectedStartDate = null;
           this.__keepInputValue = false;
         }
       } else if (this._focusedDate) {
-        this._selectedDate = this._focusedDate;
+        this._selectedStartDate = this._focusedDate;
       }
+      // for end date
+      if (this.i18n.parseDate) {
+        const inputValue = this._inputEndValue || '';
+        const parsedDate = this._getParsedDate(inputValue);
+
+        if (this._isValidDate(parsedDate)) {
+          this._selectedEndDate = parsedDate;
+        } else {
+          this.__keepInputValue = true;
+          this._selectedEndDate = null;
+          this.__keepInputValue = false;
+        }
+      } else if (this._focusedDate) {
+        this._selectedEndDate = this._focusedDate;
+      }
+
       this._ignoreFocusedDateChange = false;
     }
 
@@ -784,7 +908,8 @@ This program is available under Apache License Version 2.0, available at https:/
       // No need to revalidate the value after `_selectedDateChanged`
       // Needed in case the value was not changed: open and close dropdown.
       if (!this.value) {
-        this.validate();
+        this.validateStart();
+        this.validateEnd();
       }
     }
 
@@ -794,11 +919,24 @@ This program is available under Apache License Version 2.0, available at https:/
      * @param {string=} value Value to validate. Optional, defaults to user's input value.
      * @return {boolean} True if the value is valid and sets the `invalid` flag appropriately
      */
-    validate() {
+     validateStart() {
       // Note (Yuriy): Workaround `this._inputValue` is used in order
       // to avoid breaking change on custom `checkValidity`.
       // Can be removed with next major.
-      return !(this.invalid = !this.checkValidity(this._inputValue));
+      return !(this.invalid = !this.checkStartValidity(this._inputValue));
+    }
+
+    /**
+     * Returns true if `value` is valid, and sets the `invalid` flag appropriately.
+     *
+     * @param {string=} value Value to validate. Optional, defaults to user's input value.
+     * @return {boolean} True if the value is valid and sets the `invalid` flag appropriately
+     */
+     validateEnd() {
+      // Note (Yuriy): Workaround `this._inputValue` is used in order
+      // to avoid breaking change on custom `checkValidity`.
+      // Can be removed with next major.
+      return !(this.invalid = !this.checkEndValidity(this._inputValue));
     }
 
     /**
@@ -809,26 +947,49 @@ This program is available under Apache License Version 2.0, available at https:/
      * @param {string=} value Value to validate. Optional, defaults to the selected date.
      * @return {boolean} True if the value is valid
      */
-    checkValidity() {
-      const inputValid = !this._inputValue ||
-        (this._selectedDate && this._inputValue === this._getFormattedDate(this.i18n.formatDate, this._selectedDate));
-      const minMaxValid = !this._selectedDate ||
-        Vaadin.DateRangePickerHelper._dateAllowed(this._selectedDate, this._minDate, this._maxDate);
+    checkStartValidity() {
+      //for start date
+      const startInputValid = !this._inputStartValue ||
+        (this._selectedStartDate && this._inputStartValue === this._getFormattedDate(this.i18n.formatDate, this._selectedStartDate));
+      const startMinMaxValid = !this._selectedStartDate ||
+        Vaadin.DateRangePickerHelper._dateAllowed(this._selectedStartDate, this._minDate, this._maxDate);
 
-      let inputValidity = true;
-      if (this._inputElement) {
-        if (this._inputElement.checkValidity) {
+      let startInputValidity = true;
+      if (this._inputStartElement) {
+        if (this._inputStartElement.checkValidity) {
           // vaadin native input elements have the checkValidity method
-          this._inputElement.__forceCheckValidity = true;
-          inputValidity = this._inputElement.checkValidity();
-          this._inputElement.__forceCheckValidity = false;
-        } else if (this._inputElement.validate) {
+          this._inputStartElement.__forceCheckValidity = true;
+          startInputValidity = this._inputStartElement.checkValidity();
+          this._inputStartElement.__forceCheckValidity = false;
+        } else if (this._inputStartElement.validate) {
           // iron-form-elements have the validate API
-          inputValidity = this._inputElement.validate();
+          startInputValidity = this._inputStartElement.validate();
+        }
+      }
+      return startInputValid && startMinMaxValid && startInputValidity;
+    }
+
+    checkEndValidity() {
+      //for end date
+      const endInputValid = !this._inputEndValue ||
+        (this._selectedEndDate && this._inputEndValue === this._getFormattedDate(this.i18n.formatDate, this._selectedEndDate));
+      const endMinMaxValid = !this._selectedEndDate ||
+        Vaadin.DateRangePickerHelper._dateAllowed(this._selectedEndDate, this._minDate, this._maxDate);
+
+      let endInputValidity = true;
+      if (this._inputEndElement) {
+        if (this._inputEndElement.checkValidity) {
+          // vaadin native input elements have the checkValidity method
+          this._inputEndElement.__forceCheckValidity = true;
+          endInputValidity = this._inputEndElement.checkValidity();
+          this._inputEndElement.__forceCheckValidity = false;
+        } else if (this._inputEndElement.validate) {
+          // iron-form-elements have the validate API
+          endInputValidity = this._inputEndElement.validate();
         }
       }
 
-      return inputValid && minMaxValid && inputValidity;
+      return endInputValid && endMinMaxValid && endInputValidity;
     }
 
     /** @private */
@@ -839,11 +1000,20 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @protected */
-    _focus() {
+    _focusStart() {
       if (this._noInput) {
         this._overlayInitialized && this._overlayContent.focus();
       } else {
-        this._inputElement.focus();
+        this._inputStartElement.focus();
+      }
+    }
+
+    /** @protected */
+    _focusEnd() {
+      if (this._noInput) {
+        this._overlayInitialized && this._overlayContent.focus();
+      } else {
+        this._inputEndElement.focus();
       }
     }
 
@@ -854,8 +1024,13 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @private */
-    _applyInputValue(date) {
-      this._inputValue = date ? this._getFormattedDate(this.i18n.formatDate, date) : '';
+    _applyStartInputValue(date) {
+      this._inputStartValue = date ? this._getFormattedDate(this.i18n.formatDate, date) : '';
+    }
+
+    /** @private */
+    _applyEndInputValue(date) {
+      this._inputEndValue = date ? this._getFormattedDate(this.i18n.formatDate, date) : '';
     }
 
     /** @private */
@@ -920,38 +1095,70 @@ This program is available under Apache License Version 2.0, available at https:/
 
           break;
         case 'enter': {
-          const parsedDate = this._getParsedDate();
-          const isValidDate = this._isValidDate(parsedDate);
-          if (this.opened) {
-            if (this._overlayInitialized && this._overlayContent.focusedDate && isValidDate) {
-              this._selectedDate = this._overlayContent.focusedDate;
-            }
-            this.close();
-          } else {
-            if (!isValidDate && this._inputElement.value !== '') {
-              this.validate();
+
+          // FIX: only for start date
+          if (this._selectingStartDate) {
+            const parsedStartDate = this._getParsedDate(this._inputStartValue);
+            const isValidStartDate = this._isValidDate(parsedStartDate);
+            if (this.opened) {
+              if (this._overlayInitialized && this._overlayContent.focusedDate && isValidStartDate) {
+                // FIX: for now pressing enter will change the start date with the focused date
+                this._selectedStartDate = this._overlayContent.focusedDate;
+              }
+              this.close();
             } else {
-              const oldValue = this.value;
-              this._selectParsedOrFocusedDate();
-              if (oldValue === this.value) {
-                this.validate();
+              if (!isValidStartDate && this._inputStartElement.value !== '') {
+                this.validateStart();
+              } else {
+                const oldValue = this.value;
+                this._selectParsedOrFocusedDate();
+                if (oldValue === this.value) {
+                  this.validateStart();
+                }
+              }
+            }
+          } else {
+            const parsedEndDate = this._getParsedDate(this._inputEndValue);
+            const isValidEndDate = this._isValidDate(parsedEndDate);
+            if (this.opened) {
+              if (this._overlayInitialized && this._overlayContent.focusedDate && isValidEndDate) {
+                // FIX: for now pressing enter will change the end date with the focused date
+                this._selectedEndDate = this._overlayContent.focusedDate;
+              }
+              this.close();
+            } else {
+              if (!isValidEndDate && this._inputEndElement.value !== '') {
+                this.validateEnd();
+              } else {
+                const oldValue = this.value;
+                this._selectParsedOrFocusedDate();
+                if (oldValue === this.value) {
+                  this.validateEnd();
+                }
               }
             }
           }
+
+
           break;
         }
         case 'esc':
           if (this.opened) {
-            this._focusedDate = this._selectedDate;
+            // FIX: for now will just affect the start date
+            this._focusedDate = this._selectedStartDate;
             this._close();
           } else if (this.autoOpenDisabled) {
             // Do not restore selected date if Esc was pressed after clearing input field
-            if (this._inputElement.value === '') {
-              this._selectedDate = null;
+            if (this._inputStartElement.value === '') {
+              this._selectedStartDate = null;
             }
-            this._applyInputValue(this._selectedDate);
+            this._applyStartInputValue(this._selectedStartDate);
+            if (this._inputEndElement.value === '') {
+              this._selectedEndDate = null;
+            }
+            this._applyInputEndValue(this._selectedEndDate);
           } else {
-            this._focusedDate = this._selectedDate;
+            this._focusedDate = this._selectedStartDate;
             this._selectParsedOrFocusedDate();
           }
           break;
@@ -973,7 +1180,7 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @private */
-    _getParsedDate(inputValue = this._inputValue) {
+    _getParsedDate(inputValue = this._inputStartValue) {
       const dateObject = this.i18n.parseDate && this.i18n.parseDate(inputValue);
       const parsedDate = dateObject &&
         this._parseDate(dateObject.year + '-' + (dateObject.month + 1) + '-' + dateObject.day);
@@ -981,15 +1188,32 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /** @private */
-    _onUserInput(e) {
-      if (!this.opened && this._inputElement.value && !this.autoOpenDisabled) {
+    _onUserInputStart(e) {
+      if (!this.opened && this._inputStartElement.value && !this.autoOpenDisabled) {
         this.open();
       }
-      this._userInputValueChanged();
+      this._userInputStartValueChanged();
 
       if (e.__fromClearButton) {
-        this.validate();
+        this.validateStart();
         this.__dispatchChange = true;
+        // FIX: Take splitting into account
+        this.value = '';
+        this.__dispatchChange = false;
+      }
+    }
+
+    /** @private */
+    _onUserInputEnd(e) {
+      if (!this.opened && this._inputEndElement.value && !this.autoOpenDisabled) {
+        this.open();
+      }
+      this._userInputEndValueChanged();
+
+      if (e.__fromClearButton) {
+        this.validateEnd();
+        this.__dispatchChange = true;
+        // FIX: Take splitting into account
         this.value = '';
         this.__dispatchChange = false;
       }
@@ -998,7 +1222,7 @@ This program is available under Apache License Version 2.0, available at https:/
     /** @private */
     _userInputStartValueChanged(value) {
       if (this.opened && this._inputStartValue) {
-        const parsedDate = this._getParsedDate(_inputStartValue);
+        const parsedDate = this._getParsedDate(this._inputStartValue);
 
         if (this._isValidDate(parsedDate)) {
           this._ignoreFocusedDateChange = true;
@@ -1013,7 +1237,7 @@ This program is available under Apache License Version 2.0, available at https:/
     /** @private */
     _userInputEndValueChanged(value) {
       if (this.opened && this._inputEndValue) {
-        const parsedDate = this._getParsedDate(_inputEndValue);
+        const parsedDate = this._getParsedDate(this._inputEndValue);
 
         if (this._isValidDate(parsedDate)) {
           this._ignoreFocusedDateChange = true;

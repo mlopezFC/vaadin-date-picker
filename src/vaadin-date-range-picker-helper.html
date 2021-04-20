@@ -56,6 +56,22 @@ This program is available under Apache License Version 2.0, available at https:/
     }
 
     /**
+     * Check if a given date is between two other dates
+     *
+     * @param {Date} date
+     * @param {Date} dateStart
+     * @param {Date} dateEnd
+     * @return {Boolean} True if the given date is between the other two. 
+     */
+     static _dateBetween(date, dateStart, dateEnd) {
+	      return date instanceof Date && 
+            dateStart instanceof Date &&
+            dateEnd instanceof Date &&
+            date.getTime() >= dateStart.getTime() && 
+            date.getTime() <= dateEnd.getTime();
+ }
+
+    /**
      * Check if the given date is in the range of allowed dates.
      *
      * @param {Date} date The date to check

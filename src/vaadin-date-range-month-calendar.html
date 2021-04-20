@@ -75,7 +75,7 @@ This program is available under Apache License Version 2.0, available at https:/
             <div
                 part="date"
                 today$="[[_isToday(item)]]"
-                selected$="[[_dateEquals(item, selectedDate)]]"
+                selected$="[[_dateBetween(item, selectedStartDate, selectedEndDate)]]"
                 focused$="[[_dateEquals(item, focusedDate)]]"
                 date="[[item]]"
                 disabled$="[[!_dateAllowed(item, minDate, maxDate)]]"
@@ -111,11 +111,24 @@ This program is available under Apache License Version 2.0, available at https:/
             },
 
             /**
-             * A `Date` object for the currently selected date.
+             * A `Date` object for the currently selected start date.
              */
-            selectedDate: {
+            selectedStartDate: {
               type: Date,
               notify: true
+            },
+
+            /**
+             * A `Date` object for the currently selected end date.
+             */
+            selectedEndDate: {
+              type: Date,
+              notify: true
+            },
+
+            selectingStartDate: {
+              type: Boolean,
+              value: true
             },
 
             /**
@@ -172,6 +185,10 @@ This program is available under Apache License Version 2.0, available at https:/
           return [
             '_showWeekNumbersChanged(showWeekNumbers, i18n.firstDayOfWeek)'
           ];
+        }
+
+        _dateBetween(date1, startDate, endDate) {
+          return Vaadin.DateRangePickerHelper._dateBetween(date1, startDate, endDate);
         }
 
         _dateEquals(date1, date2) {
@@ -319,7 +336,11 @@ This program is available under Apache License Version 2.0, available at https:/
 
         _handleTap(e) {
           if (!this.ignoreTaps && !this._notTapping && e.target.date && !e.target.hasAttribute('disabled')) {
-            this.selectedDate = e.target.date;
+            if (this.selectingStartDate) {
+              this.selectedStartDate = e.target.date;
+            } else {
+              this.selectedEndDate = e.target.date;
+            }
             this.dispatchEvent(new CustomEvent('date-tap', {bubbles: true, composed: true}));
           }
         }

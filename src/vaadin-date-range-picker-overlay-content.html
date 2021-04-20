@@ -161,8 +161,8 @@ This program is available under Apache License Version 2.0, available at https:/
     </div>
 
     <div part="overlay-header" on-touchend="_preventDefault" desktop$="[[_desktopMode]]" aria-hidden="true">
-      <div part="label">[[_formatDisplayed(selectedDate, i18n.formatDate, label)]]</div>
-      <div part="clear-button" on-tap="_clear" showclear$="[[_showClear(selectedDate)]]"></div>
+      <div part="label">[[_formatDisplayed(selectedStartDate, i18n.formatDate, label)]]</div>
+      <div part="clear-button" on-tap="_clear" showclear$="[[_showClear(selectedStartDate, selectedEndDate)]]"></div>
       <div part="toggle-button" on-tap="_cancel"></div>
 
       <div part="years-toggle-button" desktop$="[[_desktopMode]]" on-tap="_toggleYearScroller" aria-hidden="true">
@@ -176,7 +176,9 @@ This program is available under Apache License Version 2.0, available at https:/
           <vaadin-date-range-month-calendar
             i18n="[[i18n]]"
             month="[[_dateAfterXMonths(index)]]"
-            selected-date="{{selectedDate}}"
+            selected-start-date="{{selectedStartDate}}"
+            selected-end-date="{{selectedEndDate}}"
+            selecting-start-date="{{selectingStartDate}}"
             focused-date="[[focusedDate]]"
             ignore-taps="[[_ignoreTaps]]"
             show-week-numbers="[[showWeekNumbers]]"
@@ -190,7 +192,7 @@ This program is available under Apache License Version 2.0, available at https:/
       </vaadin-date-range-infinite-scroller>
       <vaadin-date-range-infinite-scroller id="yearScroller" on-tap="_onYearTap" on-custom-scroll="_onYearScroll" on-touchstart="_onYearScrollTouchStart" buffer-size="12" active="[[initialPosition]]" part="years">
         <template>
-          <div part="year-number" role="button" current$="[[_isCurrentYear(index)]]" selected$="[[_isSelectedYear(index, selectedDate)]]">
+          <div part="year-number" role="button" current$="[[_isCurrentYear(index)]]" selected$="[[_isSelectedYear(index, selectedStartDate)]]">
             [[_yearAfterXYears(index)]]
           </div>
           <div part="year-separator" aria-hidden="true"></div>
@@ -228,8 +230,25 @@ This program is available under Apache License Version 2.0, available at https:/
             /**
              * The value for this element.
              */
-            selectedDate: {
+            selectedStartDate: {
               type: Date,
+              notify: true
+            },
+
+            /**
+             * The value for this element.
+             */
+            selectedEndDate: {
+              type: Date,
+              notify: true
+            },
+
+            /**
+             * Boolean to control which date we're currently selecting
+             */
+            selectingStartDate: {
+              type: Boolean,
+              value: true,
               notify: true
             },
 
@@ -463,7 +482,7 @@ This program is available under Apache License Version 2.0, available at https:/
           if (Math.abs(this.$.monthScroller.position - this._differenceInMonths(today, this._originDate)) < 0.001) {
             // Select today only if the month scroller is positioned approximately
             // at the beginning of the current month
-            this.selectedDate = today;
+            this.selectedStartDate = today;
             this._close();
           } else {
             this._scrollToCurrentMonth();
@@ -478,8 +497,8 @@ This program is available under Apache License Version 2.0, available at https:/
           this.scrollToDate(new Date(), true);
         }
 
-        _showClear(selectedDate) {
-          return !!selectedDate;
+        _showClear(selectedStartDate, selectedEndDate) {
+          return !!(selectedStartDate | selectedEndDate);
         }
 
         _onYearTap(e) {
@@ -657,7 +676,8 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _clear() {
-          this.selectedDate = '';
+          this.selectedStartDate = '';
+          this.selectedEndDate = '';
         }
 
         _close() {
@@ -671,7 +691,7 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _cancel() {
-          this.focusedDate = this.selectedDate;
+          this.focusedDate = this.selectedStartDate;
           this._close();
         }
 
@@ -762,11 +782,11 @@ This program is available under Apache License Version 2.0, available at https:/
                   this._onTodayTap();
                 } else {
                   var focusedDate = this.focusedDate;
-                  if (Vaadin.DateRangePickerHelper._dateEquals(focusedDate, this.selectedDate)) {
-                    this.selectedDate = '';
+                  if (Vaadin.DateRangePickerHelper._dateEquals(focusedDate, this.selectedStartDate)) {
+                    this.selectedStartDate = '';
                     this.focusedDate = focusedDate;
                   } else {
-                    this.selectedDate = focusedDate;
+                    this.selectedStartDate = focusedDate;
                   }
                 }
                 break;
@@ -790,7 +810,7 @@ This program is available under Apache License Version 2.0, available at https:/
         }
 
         _currentlyFocusedDate() {
-          return this.focusedDate || this.selectedDate || this.initialPosition || new Date();
+          return this.focusedDate || this.selectedStartDate || this.initialPosition || new Date();
         }
 
         _focusDate(dateToFocus) {
