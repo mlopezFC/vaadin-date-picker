@@ -261,6 +261,13 @@ This program is available under Apache License Version 2.0, available at https:/
               calendar: 'Calendar',
               clear: 'Clear',
               today: 'Today',
+              yesterday: 'Yesterday',
+              thisWeek: 'This week',
+              lastWeek: 'Last week',
+              thisMonth: 'This month',
+              lastMonth: 'Last month',
+              thisYear: 'This Year',
+              lastYear: 'Last Year',
               cancel: 'Cancel',
               formatDate: d => {
                 const yearStr = String(d.year).replace(/\d+/, y => '0000'.substr(y.length) + y);
@@ -708,6 +715,18 @@ This program is available under Apache License Version 2.0, available at https:/
 
     /** @private */
     _valueChanged(value, oldValue) {
+      if (this.__dispatchChange) {
+        this.dispatchEvent(new CustomEvent('change', {bubbles: true}));
+      }
+      // FIX: separate string in two dates
+      if (!this._handleDateChange('_selectedStartDate', value, oldValue)) {
+        // FIX: restauro el start
+        //this.value = oldValue;
+      }
+    }
+
+    /** @private */
+    _endValueChanged(value, oldValue) {
       if (this.__dispatchChange) {
         this.dispatchEvent(new CustomEvent('change', {bubbles: true}));
       }

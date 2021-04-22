@@ -22,7 +22,7 @@ This program is available under Apache License Version 2.0, available at https:/
     <style>
       :host {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         height: 100%;
         width: 100%;
         outline: none;
@@ -130,9 +130,12 @@ This program is available under Apache License Version 2.0, available at https:/
 
       [part="toolbar"] {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
+        align-items: flex-start;
         z-index: 2;
         flex-shrink: 0;
+        flex-direction: column;
+        margin-right: 0px;
       }
 
       [part~="overlay-header"]:not([desktop]) {
@@ -169,6 +172,35 @@ This program is available under Apache License Version 2.0, available at https:/
         [[_yearAfterXMonths(_visibleMonthIndex)]]
       </div>
     </div>
+    <div on-touchend="_preventDefault" role="toolbar" part="toolbar">
+      <vaadin-button id="todayButton" theme="tertiary" part="today-button" disabled="[[!_isTodayAllowed(minDate, maxDate)]]" on-tap="_onTodayTap">
+        [[i18n.today]]
+      </vaadin-button>
+      <vaadin-button id="yesterdayButton" theme="tertiary" part="preset-button" on-tap="_onYesterdayTap">
+        [[i18n.yesterday]]
+      </vaadin-button>
+      <vaadin-button id="thisWeekButton" theme="tertiary" part="preset-button" on-tap="_onThisWeekTap">
+        [[i18n.thisWeek]]
+      </vaadin-button>
+      <vaadin-button id="lastWeekButton" theme="tertiary" part="preset-button" on-tap="_onLastWeekTap">
+        [[i18n.lastWeek]]
+      </vaadin-button>
+      <vaadin-button id="thisMonthButton" theme="tertiary" part="preset-button" on-tap="_onThisMonthTap">
+        [[i18n.thisMonth]]
+      </vaadin-button>
+      <vaadin-button id="lastMonthButton" theme="tertiary" part="preset-button" on-tap="_onLastMonthTap">
+        [[i18n.lastMonth]]
+      </vaadin-button>
+      <vaadin-button id="thisYearButton" theme="tertiary" part="preset-button" on-tap="_onThisYearTap">
+        [[i18n.thisYear]]
+      </vaadin-button>
+      <vaadin-button id="lastYearButton" theme="tertiary" part="preset-button" on-tap="_onLastYearTap">
+        [[i18n.lastYear]]
+      </vaadin-button>
+      <vaadin-button id="cancelButton" theme="tertiary" part="cancel-button" on-tap="_cancel">
+        [[i18n.cancel]]
+      </vaadin-button>
+    </div>
 
     <div id="scrollers" desktop$="[[_desktopMode]]" on-track="_track">
       <vaadin-date-range-infinite-scroller id="monthScroller" on-custom-scroll="_onMonthScroll" on-touchstart="_onMonthScrollTouchStart" buffer-size="3" active="[[initialPosition]]" part="months">
@@ -200,14 +232,6 @@ This program is available under Apache License Version 2.0, available at https:/
       </vaadin-date-range-infinite-scroller>
     </div>
 
-    <div on-touchend="_preventDefault" role="toolbar" part="toolbar">
-      <vaadin-button id="todayButton" theme="tertiary" part="today-button" disabled="[[!_isTodayAllowed(minDate, maxDate)]]" on-tap="_onTodayTap">
-        [[i18n.today]]
-      </vaadin-button>
-      <vaadin-button id="cancelButton" theme="tertiary" part="cancel-button" on-tap="_cancel">
-        [[i18n.cancel]]
-      </vaadin-button>
-    </div>
 
     <iron-media-query query="(min-width: 375px)" query-matches="{{_desktopMode}}"></iron-media-query>
   </template>
@@ -483,10 +507,83 @@ This program is available under Apache License Version 2.0, available at https:/
             // Select today only if the month scroller is positioned approximately
             // at the beginning of the current month
             this.selectedStartDate = today;
+            this.selectedEndDate = today;
             this._close();
           } else {
             this._scrollToCurrentMonth();
           }
+        }
+
+        _onYesterdayTap() {
+          const yesterday = new Date(new Date())
+          yesterday.setDate(yesterday.getDate() - 1)
+
+          if (Math.abs(this.$.monthScroller.position - this._differenceInMonths(yesterday, this._originDate)) < 0.001) {
+            // Select yesterday only if the month scroller is positioned approximately
+            // at the beginning of the current month
+            this.selectedStartDate = yesterday;
+            this.selectedEndDate = yesterday;
+            this._close();
+          } else {
+            this._scrollToCurrentMonth();
+          }
+        }
+
+        _onThisWeekTap() {
+          var lastSunday = this._getLastSunday(new Date());
+          this.selectedStartDate = lastSunday;
+          var nextSunday = new Date();
+          nextSunday.setDate(lastSunday.getDate() + 6);
+          this.selectedEndDate = nextSunday;
+          this._close();
+        }
+
+        _onLastWeekTap() {
+          var lastSunday = this._getLastSunday(new Date());
+          lastSunday.setDate(lastSunday.getDate() - 7);
+          this.selectedStartDate = lastSunday;
+          var nextSunday = new Date();
+          nextSunday.setDate(lastSunday.getDate() + 6);
+          this.selectedEndDate = nextSunday;
+          this._close();
+        }
+
+        _onThisMonthTap() {
+          var firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+          this.selectedStartDate = firstDay;
+          var lastDay = new Date(new Date().getFullYear(), new Date().getMonth()+1, 0);
+          this.selectedEndDate = lastDay;
+          this._close();
+        }
+
+        _onLastMonthTap() {
+          var firstDay = new Date(new Date().getFullYear(), new Date().getMonth()-1, 1);
+          this.selectedStartDate = firstDay;
+          var lastDay = new Date(new Date().getFullYear(), new Date().getMonth(), 0);
+          this.selectedEndDate = lastDay;
+          this._close();
+        }
+
+        _onThisYearTap() {
+          var firstDay = new Date(new Date().getFullYear(), 0, 1);
+          this.selectedStartDate = firstDay;
+          var lastDay = new Date(new Date().getFullYear()+1, 0, 0);
+          this.selectedEndDate = lastDay;
+          this._close();
+        }
+
+        _onLastYearTap() {
+          var firstDay = new Date(new Date().getFullYear()-1, 0, 1);
+          this.selectedStartDate = firstDay;
+          var lastDay = new Date(new Date().getFullYear(), 0, 0);
+          this.selectedEndDate = lastDay;
+          this._close();
+        }
+
+        _getLastSunday(d) {
+          var t = new Date(d);
+          t.setDate(t.getDate() - t.getDay());
+          return t;
         }
 
         _scrollToCurrentMonth() {
