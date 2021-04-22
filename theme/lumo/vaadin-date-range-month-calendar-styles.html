@@ -113,7 +113,32 @@
       }
 
       [part="date"][selected]::before {
+        background-color: var(--lumo-primary-color-50pct);
+        border-radius: 0px;
+        padding-left: 2px;
+        padding-right: 2px;
+      }
+
+      [part="date"][start] {
+        color: var(--lumo-primary-contrast-color);
+      }
+
+      [part="date"][start]::before {
         background-color: var(--lumo-primary-color);
+        border-radius: var(--lumo-border-radius);
+        padding-left: 0px;
+        padding-right: 0px;
+      }
+
+      [part="date"][end] {
+        color: var(--lumo-primary-contrast-color);
+      }
+
+      [part="date"][end]::before {
+        background-color: var(--lumo-primary-color);
+        border-radius: var(--lumo-border-radius);
+        padding-left: 0px;
+        padding-right: 0px;
       }
 
       [part="date"][disabled] {

@@ -30,10 +30,16 @@ This program is available under Apache License Version 2.0, available at https:/
         pointer-events: auto;
       }
 
-      [part="text-field"] {
-        width: 48%;
+      [part="start-text-field"] {
+        width: 49%;
         min-width: 0;
       }
+      [part="end-text-field"] {
+        width: 49%;
+        min-width: 0;
+        margin-left: -4px;
+      }
+
     </style>
 
 
@@ -52,13 +58,13 @@ This program is available under Apache License Version 2.0, available at https:/
         error-message="[[errorMessage]]"
         clear-button-visible="[[clearButtonVisible]]"
         aria-label$="[[label]]"
-        part="text-field"
+        part="start-text-field"
         helper-text="[[helperText]]"
         theme$="[[theme]]"
+        class="startDate"
       >
       <slot name="prefix" slot="prefix"></slot>
       <slot name="helper" slot="helper">[[helperText]]</slot>
-      <div part="toggle-button" slot="suffix" on-tap="_toggle" role="button" aria-label$="[[i18n.calendar]]" aria-expanded$="[[_getAriaExpanded(opened)]]"></div>
     </vaadin-date-range-picker-text-field>
 
     <vaadin-date-range-picker-text-field id="endInput"
@@ -76,9 +82,10 @@ This program is available under Apache License Version 2.0, available at https:/
         error-message="[[errorMessage]]"
         clear-button-visible="[[clearButtonVisible]]"
         aria-label$="[[endLabel]]"
-        part="text-field"
+        part="end-text-field"
         helper-end-text="[[helperEndText]]"
         theme$="[[theme]]"
+        class="endDate"
       >
       <slot name="prefix" slot="prefix"></slot>
       <slot name="helper" slot="helper">[[helperEndText]]</slot>

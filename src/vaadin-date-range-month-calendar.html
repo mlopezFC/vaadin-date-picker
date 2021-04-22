@@ -76,6 +76,8 @@ This program is available under Apache License Version 2.0, available at https:/
                 part="date"
                 today$="[[_isToday(item)]]"
                 selected$="[[_dateBetween(item, selectedStartDate, selectedEndDate)]]"
+                start$="[[_dateEquals(item, selectedStartDate)]]"
+                end$="[[_dateEquals(item, selectedEndDate)]]"
                 focused$="[[_dateEquals(item, focusedDate)]]"
                 date="[[item]]"
                 disabled$="[[!_dateAllowed(item, minDate, maxDate)]]"

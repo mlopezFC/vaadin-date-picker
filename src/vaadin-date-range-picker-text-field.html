@@ -28,6 +28,16 @@ This program is available under Apache License Version 2.0, available at https:/
         direction: rtl;
         text-align: left;
       }
+
+      :host(.endDate) [part="input-field"] {
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+      }
+      :host(.startDate) [part="input-field"] {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 0px;
+      }
+
     </style>
   </template>
 </dom-module>
